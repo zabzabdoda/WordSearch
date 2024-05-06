@@ -1,15 +1,5 @@
-.letter-button {
-    padding: 0px;
-    margin: 0px;
-    aspect-ratio: 1/1;
-    background-color: rgba(0, 0, 0, 0);
-    border: none;
-    flex: 1;
-    justify-content: center;
-}
-
 .selected {
-    background-color: rgba(196, 36, 36, 0.7);
+    background-color: rgba(76, 97, 214, 0.9);
     box-sizing: border-box;
     padding: auto;
     border-radius: 20%;
@@ -17,63 +7,9 @@
 }
 
 .secondary {
-    background-color: rgba(76, 97, 214, 0.7);
+    background-color: rgba(76, 97, 214, 0.5);
     padding: auto;
     border-radius: 20%;
-}
-
-.circle {
-    font-size: x-large;
-    width: 100%;
-    height: 100%;
-    align-content: center;
-}
-
-@media screen and (max-width: 570px){
-    .circle{
-        font-size: large;
-    }
-}
-@media screen and (max-width: 450px){
-    .circle{
-        font-size: medium;
-    }
-}
-
-@media screen and (min-width: 900px){
-    .circle{
-        font-size: xx-large;
-    }
-}
-
-.button-container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    background-color: gainsboro;
-    border-radius: 10%;
-    padding: 20px;
-    margin: 20px;
-}
-
-.row-div {
-    display: flex;
-}
-
-.tempButton {
-    margin: 10px;
-    padding: 10px;
-}
-
-.tempButton-container {
-    justify-content: center;
-    display: flex;
-}
-
-.alert {
-    margin: 20px;
-    width: 600px;
-    text-align: center;
 }
 
 .completed {

@@ -1,5 +1,52 @@
-import "./shared.css";
+import styled from "styled-components";
 import React from "react";
+
+const StyledButton = styled.button`
+    padding: 0px;
+    margin: 0px;
+    aspect-ratio: 1/1;
+    background-color: rgba(0, 0, 0, 0);
+    border: none;
+    flex: 1;
+    justify-content: center;
+`;
+
+const StyledText = styled.div`
+    font-size: x-large;
+    width: 100%;
+    height: 100%;
+    align-content: center;
+    @media screen and (max-width: 570px){
+        font-size: large;
+    }
+    @media screen and (max-width: 450px){
+        font-size: medium;
+    }
+    
+    @media screen and (min-width: 900px){
+        font-size: xx-large;
+    }
+`;
+
+const StyledGridWrapper = styled.div`
+    justify-content: center;
+    display: flex;
+    align-items: center;
+`;
+
+const StyledButtonContainer = styled.div`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: gainsboro;
+    border-radius: 10%;
+    padding: 20px;
+    margin: 20px;
+`;
+
+const StyledRow = styled.div`
+    display: flex;
+`;
 
 class Grid extends React.Component {
 
@@ -25,11 +72,10 @@ class Grid extends React.Component {
             grid:
                 Array.from({ length: this.props.gridSize }, (t, x) =>
                     Array.from({ length: this.props.gridSize }, (t, y) => (
-                        <button className="letter-button" row={x} col={y}>
-                            <div
-                                ref={tempRefs[x][y]}
+                        <StyledButton row={x} col={y}>
+                            <StyledText
                                 className="circle"
-
+                                ref={tempRefs[x][y]}
                                 onMouseDown={this.props.handleButtonMouseDown}
                                 onTouchStart={this.props.handleButtonMouseDown}
 
@@ -44,8 +90,8 @@ class Grid extends React.Component {
                                 y={y}
                             >
                                 {this.props.tempGrid[x][y]}
-                            </div>
-                        </button>
+                            </StyledText>
+                        </StyledButton>
                     ))
                 ),
         });
@@ -62,17 +108,17 @@ class Grid extends React.Component {
     render() {
         return (
             <>
-                <div style={{ width: "100%", minWidth: "275px", maxWidth: "575px", touchAction: "none" }} className="center">
-                    <div className="button-container ">
+                <StyledGridWrapper style={{ width: "100%", minWidth: "275px", maxWidth: "575px", touchAction: "none" }}>
+                    <StyledButtonContainer>
                         {this.state.grid.map((row, rowIndex) => (
-                            <div className="row-div" key={rowIndex}>
+                            <StyledRow key={rowIndex}>
                                 {row.map((cell, cellIndex) => (
                                     <>{cell}</>
                                 ))}
-                            </div>
+                            </StyledRow>
                         ))}
-                    </div>
-                </div>
+                    </StyledButtonContainer>
+                </StyledGridWrapper>
             </>
         );
     }

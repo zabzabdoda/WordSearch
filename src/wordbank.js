@@ -1,16 +1,60 @@
-import "./shared.css";
-import "./wordbank.css"
 import React from "react";
-import { ListGroup, Button } from "react-bootstrap";
+import { ListGroup, ListGroupItem } from "react-bootstrap";
+import styled from "styled-components";
+
+
+const StyledListItem = styled(ListGroupItem)`
+    min-width: 100px;
+    max-width: 500px;
+    break-inside: avoid;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background-color: ${props => {
+        //console.log(props.$found);
+        //console.log(props);
+        if (props.$found) {
+            return "rgba(61, 165, 58,0.5)";
+        } else if (props.$toobig) {
+            return "rgba(255, 255, 0, 0.5)";
+        } else {
+            return "white";
+        }
+    }};
+    ${props => props.$canEdit && `
+        &:hover {
+            background-color: rgba(255, 0, 0, 0.5);
+            text-decoration: line-through;
+            cursor: pointer;
+        }
+    `}
+    text-decoration: ${props => (props.$found ? "line-through solid" : "none")};
+    `;
+
+const StyledListWrapper = styled.div`
+    column-count: ${props => props.$colCount};
+    column-gap: 0px;
+    border: 1px solid darkgrey;
+    margin: 20px;
+    max-width: fit-content;
+    width: 100%;
+`;
+
+const StyledWordBankWrapper = styled.div`
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    flex-direction: column;
+`;
+
+const StyledTitle = styled.h3`
+    margin: 0;
+    width: 100%;
+    text-align: center;
+`;
+
 
 class WordBank extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-
-        }
-    }
 
     deleteWord(wordToDelete) {
         const updatedWordList = [...this.props.wordList];
@@ -21,63 +65,39 @@ class WordBank extends React.Component {
         this.props.updateWordList(updatedWordList);
     }
 
-    wordStyling = (word) => {
-        let str = "word-item ";
-        if (this.props.crossWordsOff && this.props.foundWords.includes(word)) {
-            str += "disabled ";
-        }
-        if (this.props.canEdit && word.length > this.props.gridSize) {
-            str += "too-big ";
-        }
-        if (this.props.crossWordsOff && this.props.foundWords.includes(word)) {
-            str += "found";
-        }
-        return str;
-    }
-
     render() {
         return (
-            <div onClick={() => { console.log(this.props.wordList) }} className="center word-bank" style={{ width: "100%", flexDirection: "column" }}>
-                <h3 style={{ margin: 0, width: "100%", textAlign: "center" }}>
+            <StyledWordBankWrapper>
+                <StyledTitle>
                     Word Bank
-                </h3>
+                </StyledTitle>
                 {(() => {
                     if (this.props.wordList.length > 0) {
-                        return (<div className="word-bank-container" style={{ width: "100%" }}>
+                        return (<StyledListWrapper $colCount={this.props.colCount}>
                             <ListGroup>
                                 {this.props.wordList.map((word, index) => (
-                                    <ListGroup.Item
-
+                                    <StyledListItem
                                         key={index}
-                                        className={this.wordStyling(word)}
-                                    >
-                                        {(() => {
+                                        $toobig={this.props.canEdit && word.length > this.props.gridSize}
+                                        $found={this.props.crossWordsOff && this.props.foundWords[word]}
+                                        $canEdit={this.props.canEdit}
+                                        onClick={() => {
                                             if (this.props.canEdit) {
-                                                return (
-                                                    <Button
-                                                        variant="danger"
-                                                        size="sm"
-                                                        className="delete-btn"
-                                                        onClick={() => this.deleteWord(word)}
-                                                    >
-                                                        X
-                                                    </Button>
-                                                );
+                                                this.deleteWord(word)
                                             }
-                                        })()}
+                                        }}
+                                    >
                                         {word}
-
-
-                                    </ListGroup.Item>
+                                    </StyledListItem>
                                 ))}
                             </ListGroup>
-                        </div>);
+                        </StyledListWrapper>);
                     } else {
                         return <></>;
                     }
                 })()}
 
-            </div>
+            </StyledWordBankWrapper>
         );
     }
 }

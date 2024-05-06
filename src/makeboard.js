@@ -3,24 +3,73 @@ import React from "react";
 import WordBank from "./wordbank";
 import RangeSlider from "react-bootstrap-range-slider";
 import * as utils from "./utils";
-import "./addwordform.css";
 import 'bootstrap/dist/css/bootstrap.css';
-import { Redirect } from 'react-router-dom';
+import styled from "styled-components";
+
+
+const StyledWrapper = styled.div`
+    justify-content: center;
+    border: 2px gray solid;
+    padding: 30px;
+    border-radius: 20px;
+    margin: 30px;
+    width: 75%;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    min-width: 330px;
+`;
+
+const StyledTextBoxWrapper = styled.div`
+    display: flex;
+    width: 100%;
+`;
+
+const StyledTextBox = styled(InputGroup)`
+    display: flex;
+    width: 100%;
+    padding: 1rem;
+`;
+
+const StyledSliderWrapper = styled.div`
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    margin: 0.5rem;
+    padding: 0.5rem;
+`;
+
+const StyledTitle = styled.h1`
+    text-align: center;
+`;
+
+const StyledButton = styled(Button)`
+    width: 100%;
+`;
+
+const StyledSliderLabel = styled.div`
+    margin: 10px;
+`;
+
+const StyledSlider = styled(RangeSlider)`
+    height: 100%;
+`;
+
+const StyledSliderWrapperInner = styled.div`
+    display: flex;
+`;
 
 class AddWordForm extends React.Component {
 
     constructor(props) {
         super(props);
-        this.navigate = useNavigate();
         this.state = {
-            //wordList: this.props.wordList,
-            redirect: false,
             addWord: "",
             url: "",
             letterGrid: [],
             wordList: [],
             gridSize: 10,
-            //gridSize: this.props.gridSize,
         }
         this.handleAddWord = this.handleAddWord.bind(this);
         this.updateWordList = this.updateWordList.bind(this);
@@ -48,7 +97,7 @@ class AddWordForm extends React.Component {
             wordList: this.state.wordList,
         };
 
-        const base64String = btoa(JSON.stringify(gameState));
+        const base64String = "https://zabzabdoda.com/play/" + btoa(JSON.stringify(gameState));
         return base64String;
     }
 
@@ -66,10 +115,9 @@ class AddWordForm extends React.Component {
             if (this.populateBoard(this.state.wordList, this.state.gridSize)) {
                 this.fillWithRandomLetters();
                 this.setState({
-                    url: "zabzabdoda.com/play/" + this.generateURL(),
+                    url: this.generateURL(),
                 }, () => {
-                    console.log(this.state.url);
-                    this.setState({ redirect: true });
+                    window.location.href = this.state.url;
                 });
                 this.setState({ addWord: "" });
             }
@@ -89,7 +137,7 @@ class AddWordForm extends React.Component {
                         cantPlace = true;
                         break;
                     }
-                    let x = utils.getRandomInt(0, gridSize - 1); //change later to gridsize
+                    let x = utils.getRandomInt(0, gridSize - 1);
                     let y = utils.getRandomInt(0, gridSize - 1);
                     let dir = utils.getRandomInt(1, 3);
                     let invertNum = Math.random() < 0.5 ? 1 : -1;
@@ -223,13 +271,13 @@ class AddWordForm extends React.Component {
 
     render() {
         return (
-            <div className="center form-box">
-                <Redirect to={this.state.url} />
-                <div><h1 style={{ textAlign: "center" }}>Create Word Search</h1>
+            <StyledWrapper>
+
+                <div><StyledTitle>Create Word Search</StyledTitle>
                     <div>
-                        <WordBank canEdit={true} crossWordsOff={false} gridSize={this.state.gridSize} wordList={this.state.wordList} updateWordList={this.updateWordList}></WordBank>
-                        <div className="row-div" style={{ width: "100%" }}>
-                            <InputGroup className="row-div p-3" style={{ width: "100%" }}>
+                        <WordBank colCount={1} canEdit={true} crossWordsOff={false} gridSize={this.state.gridSize} wordList={this.state.wordList} updateWordList={this.updateWordList}></WordBank>
+                        <StyledTextBoxWrapper>
+                            <StyledTextBox>
                                 <Form.Control
                                     placeholder="Add word..."
                                     maxLength={this.state.gridSize}
@@ -247,13 +295,15 @@ class AddWordForm extends React.Component {
                                     ref={this.inputRef}
                                 />
                                 <Button onClick={this.handleAddWord}>Add</Button>
-                            </InputGroup>
-                        </div>
-                        <div className="center m-2 p-2" >
+                            </StyledTextBox>
+                        </StyledTextBoxWrapper>
+                        <StyledSliderWrapper>
                             <div>Grid Size:</div>
-                            <div style={{ display: "flex" }}><div style={{ margin: "10px" }}>{this.state.gridSize}</div>
-                                <RangeSlider
-                                    style={{ height: "100%" }}
+                            <StyledSliderWrapperInner>
+                                <StyledSliderLabel>
+                                    {this.state.gridSize}
+                                </StyledSliderLabel>
+                                <StyledSlider
                                     value={this.state.gridSize}
                                     onChange={(e) => {
                                         this.setState({ gridSize: e.target.value });
@@ -263,15 +313,15 @@ class AddWordForm extends React.Component {
                                     max={20}
                                     tooltip="off"
                                 />
-                            </div>
-                        </div>
-                        <Button style={{ width: "100%" }} onClick={this.generate}>
+                            </StyledSliderWrapperInner>
+                        </StyledSliderWrapper>
+                        <StyledButton onClick={this.generate}>
                             Generate Game
-                        </Button>
+                        </StyledButton>
                         <Form.Control id="textarea" readOnly value={this.state.url} as="textarea" />
                     </div>
                 </div>
-            </div>
+            </StyledWrapper>
         );
     }
 }

@@ -2,7 +2,11 @@ import React from "react";
 import { Modal, ModalTitle, ModalHeader, ModalBody, ModalFooter } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
 import Confetti from "react-confetti";
+import styled from "styled-components";
 
+const StyledText = styled(ModalBody)`
+  text-align: center;
+`;
 
 class FinishModal extends React.Component {
 
@@ -40,12 +44,12 @@ class FinishModal extends React.Component {
           keyboard={false}
         >
           <ModalHeader closeButton>
-            <ModalTitle>Modal title</ModalTitle>
+            <ModalTitle>YOU WIN!</ModalTitle>
           </ModalHeader>
-          <ModalBody style={{ textAlign: "center" }}>
+          <StyledText>
             You finished the word search! Here have a cookie<p onClick={() => { this.setState({ cookies: !this.state.cookies }) }}>🍪</p>
             To make a word search puzzle go to <a href="http://zabzabdoda.com">zabzabdoda.com</a>
-          </ModalBody>
+          </StyledText>
 
           <ModalFooter>
             <Button variant="secondary" onClick={this.props.onClose}>

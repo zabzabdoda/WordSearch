@@ -3,7 +3,20 @@ import Grid from "./grid";
 import * as utils from "./utils";
 import FinishModal from "./finishmodal";
 import WordBank from "./wordbank";
-import "./wordsearchplay.css";
+import styled from "styled-components";
+
+const StyledBoardWrapper = styled.div`
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    @media screen and (max-width: 570px) {
+        flex-direction: column;
+    }
+`;
+
+const StyledGridWrapper = styled(StyledBoardWrapper)`
+    width: 60%;
+`;
 
 class WordSearchGame extends React.Component {
 
@@ -11,6 +24,7 @@ class WordSearchGame extends React.Component {
         super(props);
         const params = window.location.href.split("/play/");
         const gameState = JSON.parse(atob(params[1]));
+
         this.state = {
             tempGrid: gameState.grid,
             buttonRefs: [],
@@ -21,28 +35,27 @@ class WordSearchGame extends React.Component {
             isDragging: false,
             wordList: gameState.wordList,
             gridSize: gameState.gridSize,
-            foundWords: [],
+            foundWords: gameState.wordList.reduce((acc, word) => {
+                acc[word] = false;
+                return acc;
+            }, {}),
             showConfetti: false,
         }
-        console.log(gameState.grid);
+        console.log(this.state.foundWords);
         this.setButtonRefs = this.setButtonRefs.bind(this);
         this.closeModal = this.closeModal.bind(this);
     }
 
+
     handleButtonMouseDown = (e) => {
-        // Start tracking the selected word when mouse button is pressed
-        //let b = e.target.closest("button");
-        console.log("Mouse Down")
         this.setState({ isDragging: true });
         this.setState({ startCoordX: e.target.parentNode.getAttribute("row") });
         this.setState({ startCoordY: e.target.parentNode.getAttribute("col") });
         e.target.classList.add("selected");
+        document.addEventListener("mouseup", this.handleButtonMouseUp)
     };
 
     handleButtonMouseEnter = (e) => {
-        // Update the selected word as the mouse enters other buttons
-        console.log("Mouse Down");
-
         if (this.state.isDragging) {
             const elements = document.querySelectorAll("*");
             elements.forEach((element) => {
@@ -50,7 +63,6 @@ class WordSearchGame extends React.Component {
             });
             this.setState({ endCoordX: e.target.parentNode.getAttribute("row") });
             this.setState({ endCoordY: e.target.parentNode.getAttribute("col") });
-            //let b = e.target.closest("button");
             if (!e.target.classList.contains("selected")) {
                 e.target.classList.add("secondary");
             }
@@ -75,9 +87,8 @@ class WordSearchGame extends React.Component {
         }
     };
 
+
     handleButtonMouseUp = () => {
-        // Finish tracking the selected word when mouse button is released
-        console.log("Mouse Up");
         if (this.state.isDragging) {
             this.setState({ isDragging: false });
             if (
@@ -107,20 +118,29 @@ class WordSearchGame extends React.Component {
                         currentWord.forEach((e) => {
                             word += this.state.buttonRefs[e["x1"]][e["y1"]].current.textContent;
                         });
-                        console.log("Selected word:", word);
-                        this.setState({ selectedWord: word });
-                        if (
-                            this.state.wordList.includes(word) &&
-                            !this.state.foundWords.includes(word)
-                        ) {
-                            if (this.state.foundWords.length + 1 === this.state.wordList.length) {
-                                this.setState({ showConfetti: true })
+                        this.setState({ selectedWord: word }, () => {
+                            if (
+                                this.state.wordList.includes(word) &&
+                                !this.state.foundWords[word]
+                            ) {
+                                this.setState(prevState => ({
+                                    foundWords: {
+                                        ...prevState.foundWords,
+                                        [word]: true,
+                                    }
+                                }), () => {
+                                    let test = Object.values(this.state.foundWords).every(value => value === true);
+                                    if (test) {
+                                        this.setState({ showConfetti: true })
+                                    }
+                                });
+                                //this.setState({ foundWords: {...this.state.foundWords, word} });
+                                currentWord.forEach((e) => {
+                                    this.state.buttonRefs[e.x1][e.y1].current.classList.add("completed");
+                                });
                             }
-                            this.setState({ foundWords: [...this.state.foundWords, word] });
-                            currentWord.forEach((e) => {
-                                this.state.buttonRefs[e.x1][e.y1].current.classList.add("completed");
-                            });
-                        }
+                        });
+
                     }
                 }
             }
@@ -147,19 +167,24 @@ class WordSearchGame extends React.Component {
     render() {
         return (
             <>
-                <FinishModal show={this.state.showConfetti} onClose={this.closeModal}></FinishModal>
-                <div className="center">
-                    <div className="center" style={{ width: "60%" }}>
-                        <Grid
-                            tempGrid={this.state.tempGrid}
-                            handleButtonMouseDown={this.handleButtonMouseDown}
-                            handleButtonMouseUp={this.handleButtonMouseUp}
-                            handleButtonMouseEnter={this.handleButtonMouseEnter}
-                            buttonRefs={this.state.buttonRefs}
-                            setButtonRefs={this.setButtonRefs}
-                            gridSize={this.state.gridSize}
-                        ></Grid></div>
-                    <div className="center" ><WordBank canEdit={false} crossWordsOff={true} gridSize={this.state.gridSize} wordList={this.state.wordList} foundWords={this.state.foundWords}></WordBank></div>
+                <div ref={this.windowRef}>
+                    <FinishModal show={this.state.showConfetti} onClose={this.closeModal}></FinishModal>
+                    <StyledBoardWrapper>
+                        <StyledGridWrapper>
+                            <Grid
+                                tempGrid={this.state.tempGrid}
+                                handleButtonMouseDown={this.handleButtonMouseDown}
+                                handleButtonMouseUp={this.handleButtonMouseUp}
+                                handleButtonMouseEnter={this.handleButtonMouseEnter}
+                                buttonRefs={this.state.buttonRefs}
+                                setButtonRefs={this.setButtonRefs}
+                                gridSize={this.state.gridSize}
+                            />
+                        </StyledGridWrapper>
+                        <StyledBoardWrapper >
+                            <WordBank colCount={2} canEdit={false} crossWordsOff={true} gridSize={this.state.gridSize} wordList={this.state.wordList} foundWords={this.state.foundWords} />
+                        </StyledBoardWrapper>
+                    </StyledBoardWrapper>
                 </div>
             </>
         );

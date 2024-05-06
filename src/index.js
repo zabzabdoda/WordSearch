@@ -4,7 +4,7 @@ import "./index.css";
 import WordSearchMaker from "./wordsearchmaker";
 import WordSearchGame from "./wordsearchplay";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 function Header() {
   return (
@@ -15,6 +15,7 @@ function Header() {
     </header>
   );
 }
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <StrictMode>
@@ -23,21 +24,8 @@ root.render(
       <Routes>
         <Route path="/" element={<WordSearchMaker />} />
         <Route path="/play/:state" element={<WordSearchGame />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
 );
-/*function Main() {
-  return (
-    <BrowserRouter>
-      <Header />
-      <Routes>
-        <Route path="/" element={<WordSearchMaker />} />
-        <Route path="/play/:state" element={<WordSearchMaker />} />
-      </Routes>
-    </BrowserRouter>
-  );
-}
-
-ReactDOM.render(<Main />, document.getElementById("root"));
-*/
