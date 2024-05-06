@@ -1,0 +1,45 @@
+.word-bank-container {
+    column-count: 1;
+    /* Adjust the number of columns as needed */
+    column-gap: 0px;
+    /* Adjust the gap between columns as needed */
+    border: 1px solid darkgray;
+    margin: 20px;
+    max-width: fit-content;
+}
+
+.delete-btn {
+    visibility:hidden;
+    position: absolute;
+}
+
+.word-item {
+
+    min-width: 100px;
+    max-width:500px;
+    break-inside: avoid;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Prevents items from splitting across columns */
+}
+
+
+.word-item:hover .delete-btn {
+    visibility: visible;
+    
+}
+
+.word-item:hover {
+    &:not(.disable):hover {
+        background-color: aliceblue !important;
+    }
+}
+
+.too-big{
+    background-color: rgba(255,0,0,0.5) !important;
+}
+
+.found{
+    background-color: rgba(61, 165, 58,0.5) !important;
+    text-decoration: line-through solid;
+}

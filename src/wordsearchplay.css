@@ -1,0 +1,13 @@
+
+.grid-bank-flex{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+
+@media screen and (max-width: 570px) {
+    .center{
+        flex-direction: column;
+    }
+}
