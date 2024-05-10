@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./board.css";
 import { Alert } from "react-bootstrap";
 import AddWordForm from "./makeboard";
@@ -17,39 +17,36 @@ const StyledAlert = styled(Alert)`
   text-align: center;
 `;
 
-class WordSearchMaker extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showAlert: false,
-    };
-    this.errorAlertCallback = this.errorAlertCallback.bind(this);
+export const WordSearchMaker = (props) => {
+
+  const [alert, showAlert] = useState(false);
+
+  useEffect(() => {
+
+  }, []);
+
+  const errorAlertCallback = () => {
+    showAlert(true);
   }
 
-  errorAlertCallback() {
-    this.setState({ showAlert: true });
-  }
-
-  render() {
-    return (
-      <>
-        <StyledWrapper>
-          <StyledAlert
-            show={this.state.showAlert}
-            onClose={() => {
-              this.setState({ showAlert: false });
-            }}
-            variant="danger"
-            dismissible
-          >
-            <Alert.Heading>Board not big enough!</Alert.Heading>
-            <p>Try increasing the size or use less words</p>
-          </StyledAlert>
-          <AddWordForm errorAlertCallback={this.errorAlertCallback}></AddWordForm>
-        </StyledWrapper>
-      </>
-    );
-  }
+  return (
+    <>
+      <StyledWrapper>
+        <StyledAlert
+          show={alert}
+          onClose={() => {
+            showAlert(false);
+          }}
+          variant="danger"
+          dismissible
+        >
+          <Alert.Heading>Board not big enough!</Alert.Heading>
+          <p>Try increasing the size or use less words</p>
+        </StyledAlert>
+        <AddWordForm errorAlertCallback={errorAlertCallback}></AddWordForm>
+      </StyledWrapper>
+    </>
+  );
 }
 
 export default WordSearchMaker;

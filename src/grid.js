@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 const StyledButton = styled.button`
     padding: 0px;
@@ -48,80 +48,86 @@ const StyledRow = styled.div`
     display: flex;
 `;
 
-class Grid extends React.Component {
+export const Grid = ({ tempGrid, gridSize, buttonRefs, handleButtonMouseEnter, handleButtonMouseUp, handleButtonMouseDown }) => {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            grid: [],
-        }
-        this.updateGrid = this.updateGrid.bind(this);
-        this.handleButtonMouseEnterMobileWrapper = this.handleButtonMouseEnterMobileWrapper.bind(this);
+    const [grid, setGrid] = useState([]);
+
+
+    useEffect(() => {
+        updateGrid();
+    }, [tempGrid]);
+
+    function getGridCoord(x, y, cols) {
+        return x * cols + y;
     }
 
-    componentDidMount() {
-        this.updateGrid();
+    const mUp = () => {
+        handleButtonMouseUp();
     }
 
-    updateGrid() {
-        let tempRefs = Array.from({ length: this.props.gridSize }, (t, x) =>
-            Array.from({ length: this.props.gridSize }, (t, y) => React.createRef())
-        );
-        this.props.setButtonRefs(tempRefs);
-        this.setState({
-            grid:
-                Array.from({ length: this.props.gridSize }, (t, x) =>
-                    Array.from({ length: this.props.gridSize }, (t, y) => (
-                        <StyledButton row={x} col={y}>
+    const mDown = (e) => {
+        handleButtonMouseDown(e);
+    }
+
+    const mEnter = (e) => {
+        handleButtonMouseEnter(e);
+
+    }
+
+    const updateGrid = () => {
+        if (tempGrid) {
+            setGrid(
+                Array.from({ length: gridSize }, (t, x) =>
+                    Array.from({ length: gridSize }, (t, y) => (
+                        <StyledButton row={x} col={y} key={`${x}-${y}`}>
                             <StyledText
+                                key={`${x}-${y}`}
                                 className="circle"
-                                ref={tempRefs[x][y]}
-                                onMouseDown={this.props.handleButtonMouseDown}
-                                onTouchStart={this.props.handleButtonMouseDown}
+                                ref={element => (buttonRefs.current[getGridCoord(x, y, gridSize)] = element)}
+                                onMouseDown={mDown}
+                                onTouchStart={mDown}
 
-                                onMouseEnter={this.props.handleButtonMouseEnter}
-                                onTouchMove={this.handleButtonMouseEnterMobileWrapper}
+                                onMouseEnter={mEnter}
+                                onTouchMove={handleButtonMouseEnterMobileWrapper}
                                 //touch={this.props.handleButtonMouseEnter}
-                                onPointerEnter={this.props.handleButtonMouseEnter}
-                                onMouseUp={this.props.handleButtonMouseUp}
-                                onTouchEnd={this.props.handleButtonMouseUp}
-
+                                onPointerEnter={mEnter}
+                                onMouseUp={mUp}
+                                onTouchEnd={mUp}
                                 x={x}
                                 y={y}
                             >
-                                {this.props.tempGrid[x][y]}
+                                {tempGrid[x][y]}
                             </StyledText>
                         </StyledButton>
                     ))
                 ),
-        });
-    }
-
-    handleButtonMouseEnterMobileWrapper(e) {
-
-        let t = { target: document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY) }
-        if (t.target !== undefined && t.target !== null && t.target.classList.contains("circle")) {
-            this.props.handleButtonMouseEnter(t);
+            );
         }
     }
 
-    render() {
-        return (
-            <>
-                <StyledGridWrapper style={{ width: "100%", minWidth: "275px", maxWidth: "575px", touchAction: "none" }}>
-                    <StyledButtonContainer>
-                        {this.state.grid.map((row, rowIndex) => (
-                            <StyledRow key={rowIndex}>
-                                {row.map((cell, cellIndex) => (
-                                    <>{cell}</>
-                                ))}
-                            </StyledRow>
-                        ))}
-                    </StyledButtonContainer>
-                </StyledGridWrapper>
-            </>
-        );
+    const handleButtonMouseEnterMobileWrapper = (e) => {
+
+        let t = { target: document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY) }
+        if (t.target !== undefined && t.target !== null && t.target.classList.contains("circle")) {
+            handleButtonMouseEnter(t);
+        }
     }
+
+    return (
+        <>
+            <StyledGridWrapper style={{ width: "100%", minWidth: "275px", maxWidth: "575px", touchAction: "none" }}>
+                <StyledButtonContainer>
+                    {grid.map((row, rowIndex) => (
+                        <StyledRow key={rowIndex}>
+                            {row.map((cell, cellIndex) => (
+                                <>{cell}</>
+                            ))}
+                        </StyledRow>
+                    ))}
+                </StyledButtonContainer>
+            </StyledGridWrapper>
+        </>
+    );
 }
 
 export default Grid;

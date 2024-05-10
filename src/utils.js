@@ -52,7 +52,7 @@ export function getRandomLetter() {
 export function bresenham(x1, x2, y1, y2) {
 
     let points = [];
-    if (!isNaN(x1) && !isNaN(x2) && !isNaN(y1) && !isNaN(x2)) {
+    if (x1 !== null && x2 !== null && y1 !== null && x2 !== null) {
         x1 = parseInt(x1);
         x2 = parseInt(x2);
         y1 = parseInt(y1);

@@ -97,7 +97,7 @@ class AddWordForm extends React.Component {
             wordList: this.state.wordList,
         };
 
-        const base64String = "https://zabzabdoda.com/play/" + btoa(JSON.stringify(gameState));
+        const base64String = btoa(JSON.stringify(gameState));
         return base64String;
     }
 
@@ -117,7 +117,24 @@ class AddWordForm extends React.Component {
                 this.setState({
                     url: this.generateURL(),
                 }, () => {
-                    window.location.href = this.state.url;
+                    //window.location.href = this.state.url;
+                    fetch("http://localhost:9000/puzzles/new", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            "grid": this.state.url,
+                            "gridSize": this.state.gridSize,
+                            "wordList": JSON.stringify(this.state.wordList).replaceAll("\"", "'")
+                        })
+                    })
+                        .then(res => res.json())
+                        .then(res => {
+                            window.location.href = "https://zabzabdoda.com/play/" + res.uuid;
+                            //setPuzzleList(res.data);
+                            //console.log(res);
+                        });
                 });
                 this.setState({ addWord: "" });
             }
@@ -156,45 +173,45 @@ class AddWordForm extends React.Component {
     }
 
     fillWithRandomLetters() {
-        let updatedButtonRefs = [...this.state.letterGrid];
+        let updatedGrid = [...this.state.letterGrid];
         for (let i = 0; i < this.state.gridSize; i++) {
             for (let j = 0; j < this.state.gridSize; j++) {
                 if (this.state.letterGrid[i][j] === " ") {
                     let newLetter = utils.getRandomLetter();
 
-                    updatedButtonRefs[i][j] = newLetter;
+                    updatedGrid[i][j] = newLetter;
 
                 }
             }
         }
-        this.setState({ letterGrid: updatedButtonRefs });
+        this.setState({ letterGrid: updatedGrid });
     }
 
     placeWord(word, x, y, dir, invertNum) {
         if (dir === 1) {
             //horizontal
-            let updatedButtonRefs = [...this.state.letterGrid];
+            let updatedGrid = [...this.state.letterGrid];
             for (let i = 0; i < word.length; i++) {
-                updatedButtonRefs[x + i * invertNum][y] = word[i];
+                updatedGrid[x + i * invertNum][y] = word[i];
             }
-            this.setState({ letterGrid: updatedButtonRefs });
+            this.setState({ letterGrid: updatedGrid });
 
         } else if (dir === 2) {
             //vertical
-            let updatedButtonRefs = [...this.state.letterGrid];
+            let updatedGrid = [...this.state.letterGrid];
             for (let i = 0; i < word.length; i++) {
-                updatedButtonRefs[x][y + i * invertNum] = word[i];
+                updatedGrid[x][y + i * invertNum] = word[i];
             }
-            this.setState({ letterGrid: updatedButtonRefs });
+            this.setState({ letterGrid: updatedGrid });
         } else if (dir === 3) {
             //diagonal
-            let updatedButtonRefs = [...this.state.letterGrid];
+            let updatedGrid = [...this.state.letterGrid];
             for (let i = 0; i < word.length; i++) {
-                updatedButtonRefs[x + i * invertNum][
+                updatedGrid[x + i * invertNum][
                     y + i * invertNum
                 ] = word[i];
             }
-            this.setState({ letterGrid: updatedButtonRefs });
+            this.setState({ letterGrid: updatedGrid });
         }
     }
 
@@ -256,13 +273,13 @@ class AddWordForm extends React.Component {
 
 
     clearBoard() {
-        let updatedButtonRefs = [...this.state.letterGrid];
+        let updatedGrid = [...this.state.letterGrid];
         for (let i = 0; i < this.state.gridSize; i++) {
             for (let j = 0; j < this.state.gridSize; j++) {
-                updatedButtonRefs[i][j] = " ";
+                updatedGrid[i][j] = " ";
             }
         }
-        this.setState({ letterGrid: updatedButtonRefs });
+        this.setState({ letterGrid: updatedGrid });
     }
 
     updateWordList(wordList) {

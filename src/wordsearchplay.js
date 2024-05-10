@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Grid from "./grid";
 import * as utils from "./utils";
 import FinishModal from "./finishmodal";
 import WordBank from "./wordbank";
 import styled from "styled-components";
+import ReactDOM from "react-dom";
+import useStateRef from "react-usestateref";
 
 const StyledBoardWrapper = styled.div`
     justify-content: center;
@@ -18,137 +20,145 @@ const StyledGridWrapper = styled(StyledBoardWrapper)`
     width: 60%;
 `;
 
-class WordSearchGame extends React.Component {
+export const WordSearchGame = (props) => {
 
-    constructor(props) {
-        super(props);
-        const params = window.location.href.split("/play/");
-        const gameState = JSON.parse(atob(params[1]));
+    const [tempGrid, setTempGrid] = useState(null);
+    const buttonRefs = useRef({});
+    const [startCoordX, setStartCoordX] = useState(null);
+    const [endCoordX, setEndCoordX] = useState(null);
+    const [startCoordY, setStartCoordY] = useState(null);
+    const [endCoordY, setEndCoordY] = useState(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [wordList, setWordList] = useState([]);
+    const [gridSize, setGridSize] = useState(10);
+    const [foundWords, setFoundWords] = useState([]);
+    const [showConfetti, setShowConfetti] = useState(false);
 
-        this.state = {
-            tempGrid: gameState.grid,
-            buttonRefs: [],
-            startCoordX: null,
-            endCoordX: null,
-            startCoordY: null,
-            endCoordY: null,
-            isDragging: false,
-            wordList: gameState.wordList,
-            gridSize: gameState.gridSize,
-            foundWords: gameState.wordList.reduce((acc, word) => {
-                acc[word] = false;
-                return acc;
-            }, {}),
-            showConfetti: false,
-        }
-        console.log(this.state.foundWords);
-        this.setButtonRefs = this.setButtonRefs.bind(this);
-        this.closeModal = this.closeModal.bind(this);
+    const useMountEffect = (fun) => useEffect(fun, []);
+
+    let scx = useRef(null);
+    let scy = useRef(null);
+    let ecx = useRef(null);
+    let ecy = useRef(null);
+    let dragRef = useRef(false);
+    let foundRef = useRef(null);
+    /*let mD = useRef(null);
+    let mE = useRef(null);
+    let mU = useRef(null);
+*/
+
+    useEffect(() => {
+        ecx.current = endCoordX;
+        ecy.current = endCoordY;
+        scx.current = startCoordX;
+        scy.current = startCoordY;
+        dragRef.current = isDragging;
+        foundRef.current = foundWords;
+
+        /* mD.current = handleButtonMouseDown;
+         mE.current = handleButtonMouseEnter;
+         mU.current = handleButtonMouseUp;*/
+    }, [startCoordX, startCoordY, endCoordX, endCoordY, isDragging, foundWords]);
+
+    function getGridCoord(x, y, cols) {
+        return parseInt(x) * parseInt(cols) + parseInt(y);
     }
 
-
-    handleButtonMouseDown = (e) => {
-        this.setState({ isDragging: true });
-        this.setState({ startCoordX: e.target.parentNode.getAttribute("row") });
-        this.setState({ startCoordY: e.target.parentNode.getAttribute("col") });
+    const handleButtonMouseDown = (e) => {
+        setIsDragging(true);
+        setStartCoordX(e.target.parentNode.getAttribute("row"));
+        setStartCoordY(e.target.parentNode.getAttribute("col"));
         e.target.classList.add("selected");
-        document.addEventListener("mouseup", this.handleButtonMouseUp)
     };
 
-    handleButtonMouseEnter = (e) => {
-        if (this.state.isDragging) {
+    const handleButtonMouseEnter = (e) => {
+        if (dragRef.current) {
             const elements = document.querySelectorAll("*");
             elements.forEach((element) => {
                 element.classList.remove("secondary");
             });
-            this.setState({ endCoordX: e.target.parentNode.getAttribute("row") });
-            this.setState({ endCoordY: e.target.parentNode.getAttribute("col") });
+            setEndCoordX(e.target.parentNode.getAttribute("row"));
+            setEndCoordY(e.target.parentNode.getAttribute("col"));
             if (!e.target.classList.contains("selected")) {
                 e.target.classList.add("secondary");
             }
             if (
                 utils.checkLineType(
-                    this.state.startCoordX,
-                    this.state.startCoordY,
+                    scx.current,
+                    scy.current,
                     e.target.parentNode.getAttribute("row"),
                     e.target.parentNode.getAttribute("col")
                 )
             ) {
                 let points = utils.bresenham(
-                    this.state.startCoordX,
+                    scx.current,
                     e.target.parentNode.getAttribute("row"),
-                    this.state.startCoordY,
+                    scy.current,
                     e.target.parentNode.getAttribute("col")
                 );
                 points.slice(1).forEach((e) => {
-                    this.state.buttonRefs[e.x1][e.y1].current.classList.add("secondary");
+                    buttonRefs.current[getGridCoord(e.x1, e.y1, gridSize)].classList.add("secondary");
                 });
             }
         }
     };
 
 
-    handleButtonMouseUp = () => {
-        if (this.state.isDragging) {
-            this.setState({ isDragging: false });
+    const handleButtonMouseUp = () => {
+        if (dragRef.current) {
+            setIsDragging(false);
             if (
-                this.state.startCoordX !== this.state.endCoordX ||
-                this.state.endCoordY !== this.state.startCoordY
+                scx.current !== ecx.current ||
+                ecy.current !== scy.current
             ) {
                 if (
-                    this.state.startCoordX !== null &&
-                    this.state.endCoordX !== null &&
-                    this.state.endCoordY !== null &&
-                    this.state.startCoordY !== null
+                    scx.current !== null &&
+                    ecx.current !== null &&
+                    ecy.current !== null &&
+                    scy.current !== null
                 ) {
                     let straight = utils.checkLineType(
-                        this.state.startCoordX,
-                        this.state.startCoordY,
-                        this.state.endCoordX,
-                        this.state.endCoordY
+                        scx.current,
+                        scy.current,
+                        ecx.current,
+                        ecy.current
                     );
                     if (straight) {
                         let currentWord = utils.bresenham(
-                            this.state.startCoordX,
-                            this.state.endCoordX,
-                            this.state.startCoordY,
-                            this.state.endCoordY
+                            scx.current,
+                            ecx.current,
+                            scy.current,
+                            ecy.current
                         );
                         let word = "";
                         currentWord.forEach((e) => {
-                            word += this.state.buttonRefs[e["x1"]][e["y1"]].current.textContent;
+                            word += buttonRefs.current[getGridCoord(e.x1, e.y1, gridSize)].textContent;
                         });
-                        this.setState({ selectedWord: word }, () => {
-                            if (
-                                this.state.wordList.includes(word) &&
-                                !this.state.foundWords[word]
-                            ) {
-                                this.setState(prevState => ({
-                                    foundWords: {
-                                        ...prevState.foundWords,
-                                        [word]: true,
-                                    }
-                                }), () => {
-                                    let test = Object.values(this.state.foundWords).every(value => value === true);
-                                    if (test) {
-                                        this.setState({ showConfetti: true })
-                                    }
-                                });
-                                //this.setState({ foundWords: {...this.state.foundWords, word} });
-                                currentWord.forEach((e) => {
-                                    this.state.buttonRefs[e.x1][e.y1].current.classList.add("completed");
-                                });
-                            }
-                        });
+                        if (
+                            wordList.includes(word) &&
+                            !foundRef.current[word]
+                        ) {
+                            let t = { ...foundRef.current, [word]: true };
+                            setFoundWords(t);
 
+                            let test = Object.values(t).every(value => value === true);
+                            if (test) {
+                                setShowConfetti(true);
+                            }
+
+                            currentWord.forEach((e) => {
+                                buttonRefs.current[getGridCoord(e.x1, e.y1, gridSize)].classList.add("completed");
+                            });
+                        }
                     }
                 }
             }
-            this.setState({ startCoordX: null });
-            this.setState({ startCoordY: null });
-            this.setState({ endCoordX: null });
-            this.setState({ endCoordY: null });
+            setStartCoordX(null);
+            setStartCoordY(null);
+            setEndCoordX(null);
+            setEndCoordY(null);
             const elements = document.querySelectorAll("*");
+
             elements.forEach((element) => {
                 element.classList.remove("selected");
                 element.classList.remove("secondary");
@@ -156,40 +166,52 @@ class WordSearchGame extends React.Component {
         }
     };
 
-    setButtonRefs(buttonRefs) {
-        this.setState({ buttonRefs: buttonRefs })
+    let closeModal = () => {
+        setShowConfetti(false);
     }
 
-    closeModal() {
-        this.setState({ showConfetti: false });
-    }
+    useMountEffect(() => {
+        let params = window.location.href.split("/play/");
+        let puzzleBase64 = "";
 
-    render() {
-        return (
-            <>
-                <div ref={this.windowRef}>
-                    <FinishModal show={this.state.showConfetti} onClose={this.closeModal}></FinishModal>
-                    <StyledBoardWrapper>
-                        <StyledGridWrapper>
-                            <Grid
-                                tempGrid={this.state.tempGrid}
-                                handleButtonMouseDown={this.handleButtonMouseDown}
-                                handleButtonMouseUp={this.handleButtonMouseUp}
-                                handleButtonMouseEnter={this.handleButtonMouseEnter}
-                                buttonRefs={this.state.buttonRefs}
-                                setButtonRefs={this.setButtonRefs}
-                                gridSize={this.state.gridSize}
-                            />
-                        </StyledGridWrapper>
-                        <StyledBoardWrapper >
-                            <WordBank colCount={2} canEdit={false} crossWordsOff={true} gridSize={this.state.gridSize} wordList={this.state.wordList} foundWords={this.state.foundWords} />
-                        </StyledBoardWrapper>
+        fetch("http://localhost:9000/puzzles?uuid=" + params[1])
+            .then(res => res.json())
+            .then(res => {
+                puzzleBase64 = res.data[0];
+                let wordList = JSON.parse(puzzleBase64.wordList.replaceAll("\'", "\""));
+                setWordList(wordList);
+                setGridSize(puzzleBase64.gridSize);
+                setTempGrid(JSON.parse(atob(puzzleBase64.grid)).grid);
+                setFoundWords(wordList.reduce((acc, word) => {
+                    acc[word] = false;
+                    return acc;
+                }, {}),);
+            }
+            );
+    });
+
+    return (
+        <>
+            <div>
+                <FinishModal show={showConfetti} onClose={closeModal}></FinishModal>
+                <StyledBoardWrapper>
+                    <StyledGridWrapper>
+                        <Grid
+                            tempGrid={tempGrid}
+                            handleButtonMouseDown={handleButtonMouseDown}
+                            handleButtonMouseUp={handleButtonMouseUp}
+                            handleButtonMouseEnter={handleButtonMouseEnter}
+                            buttonRefs={buttonRefs}
+                            gridSize={gridSize}
+                        />
+                    </StyledGridWrapper>
+                    <StyledBoardWrapper >
+                        <WordBank colCount={2} canEdit={false} crossWordsOff={true} gridSize={gridSize} wordList={wordList} foundWords={foundWords} />
                     </StyledBoardWrapper>
-                </div>
-            </>
-        );
-    }
-
+                </StyledBoardWrapper>
+            </div>
+        </>
+    );
 }
 
 export default WordSearchGame;

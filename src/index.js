@@ -5,12 +5,13 @@ import WordSearchMaker from "./wordsearchmaker";
 import WordSearchGame from "./wordsearchplay";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import Home from "./homepage";
 
 function Header() {
   return (
     <header className="nav-header">
-      <nav className="nav-top">
-        <h1 className="nav-items">Word Finder</h1>
+      <nav className="nav-top" style={{ display: "flex" }}>
+        <h1 onClick={() => { window.location.href = "https://zabzabdoda.com/" }} style={{ cursor: "pointer" }} className="nav-items">Word Search</h1>
       </nav>
     </header>
   );
@@ -22,7 +23,8 @@ root.render(
     <BrowserRouter>
       <Header />
       <Routes>
-        <Route path="/" element={<WordSearchMaker />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/create" element={<WordSearchMaker />} />
         <Route path="/play/:state" element={<WordSearchGame />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

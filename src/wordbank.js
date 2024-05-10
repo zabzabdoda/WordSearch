@@ -10,8 +10,6 @@ const StyledListItem = styled(ListGroupItem)`
     overflow: hidden;
     text-overflow: ellipsis;
     background-color: ${props => {
-        //console.log(props.$found);
-        //console.log(props);
         if (props.$found) {
             return "rgba(61, 165, 58,0.5)";
         } else if (props.$toobig) {
@@ -54,52 +52,50 @@ const StyledTitle = styled.h3`
 `;
 
 
-class WordBank extends React.Component {
+export const WordBank = (props) => {
 
-    deleteWord(wordToDelete) {
-        const updatedWordList = [...this.props.wordList];
+    const deleteWord = (wordToDelete) => {
+        const updatedWordList = [...props.wordList];
         const indexToRemove = updatedWordList.indexOf(wordToDelete);
         if (indexToRemove !== -1) {
             updatedWordList.splice(indexToRemove, 1);
         }
-        this.props.updateWordList(updatedWordList);
+        props.updateWordList(updatedWordList);
     }
 
-    render() {
-        return (
-            <StyledWordBankWrapper>
-                <StyledTitle>
-                    Word Bank
-                </StyledTitle>
-                {(() => {
-                    if (this.props.wordList.length > 0) {
-                        return (<StyledListWrapper $colCount={this.props.colCount}>
-                            <ListGroup>
-                                {this.props.wordList.map((word, index) => (
-                                    <StyledListItem
-                                        key={index}
-                                        $toobig={this.props.canEdit && word.length > this.props.gridSize}
-                                        $found={this.props.crossWordsOff && this.props.foundWords[word]}
-                                        $canEdit={this.props.canEdit}
-                                        onClick={() => {
-                                            if (this.props.canEdit) {
-                                                this.deleteWord(word)
-                                            }
-                                        }}
-                                    >
-                                        {word}
-                                    </StyledListItem>
-                                ))}
-                            </ListGroup>
-                        </StyledListWrapper>);
-                    } else {
-                        return <></>;
-                    }
-                })()}
+    return (
+        <StyledWordBankWrapper>
+            <StyledTitle>
+                Word Bank
+            </StyledTitle>
+            {(() => {
+                if (props.wordList.length > 0) {
+                    return (<StyledListWrapper $colCount={props.colCount}>
+                        <ListGroup>
+                            {props.wordList.map((word, index) => (
+                                <StyledListItem
+                                    key={index}
+                                    $toobig={props.canEdit && word.length > props.gridSize}
+                                    $found={props.crossWordsOff && props.foundWords[word]}
+                                    $canEdit={props.canEdit}
+                                    onClick={() => {
+                                        if (props.canEdit) {
+                                            deleteWord(word)
+                                        }
+                                    }}
+                                >
+                                    {word}
+                                </StyledListItem>
+                            ))}
+                        </ListGroup>
+                    </StyledListWrapper>);
+                } else {
+                    return <></>;
+                }
+            })()}
 
-            </StyledWordBankWrapper>
-        );
-    }
+        </StyledWordBankWrapper>
+    );
 }
 
 export default WordBank;
