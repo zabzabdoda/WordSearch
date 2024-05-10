@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 
 const StyledButton = styled.button`
     padding: 0px;
