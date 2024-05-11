@@ -4,13 +4,13 @@
     justify-content: center;
     width: fit-content;
     will-change: transform;
-    transition: transform 450ms, text-shadow 450ms ease;
+    transition: transform 200ms, text-shadow 200ms ease;
 }
 
 .nav-items:hover {
-    transition: transform 450ms, text-shadow 450ms ease;
+    transition: transform 200ms, text-shadow 200ms ease;
     transform: translateY(-3px);
-    text-shadow: 0px 3px 7px rgba(0,0,0,0.7);
+    text-shadow: 0px 4px 4px rgba(0,0,0,0.7);
 }
 
 

@@ -19,6 +19,9 @@ const StyledGridWrapper = styled(StyledBoardWrapper)`
     width: 60%;
 `;
 
+const apiUrl = process.env.REACT_APP_API_URL || "https://api.zabzabdoda.com";
+
+
 export const WordSearchGame = (props) => {
 
     const [tempGrid, setTempGrid] = useState(null);
@@ -173,10 +176,11 @@ export const WordSearchGame = (props) => {
         let params = window.location.href.split("/play/");
         let puzzleBase64 = "";
 
-        fetch("https://api.zabzabdoda.com/puzzles/get?uuid=" + params[1])
+        fetch(`${apiUrl}/puzzles/get?uuid=` + params[1])
             .then(res => res.json())
             .then(res => {
                 puzzleBase64 = res.data[0];
+                console.log(res);
                 let wordList = JSON.parse(puzzleBase64.wordList.replaceAll("\'", "\""));
                 setWordList(wordList);
                 setGridSize(puzzleBase64.gridSize);

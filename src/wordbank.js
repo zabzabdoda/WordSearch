@@ -1,6 +1,8 @@
 import React from "react";
 import { ListGroup, ListGroupItem } from "react-bootstrap";
 import styled from "styled-components";
+import InformationHover from "./information";
+import TrashIcon from "./icons";
 
 
 const StyledListItem = styled(ListGroupItem)`
@@ -18,13 +20,23 @@ const StyledListItem = styled(ListGroupItem)`
             return "white";
         }
     }};
+    svg {
+        display: none;
+    }
     ${props => props.$canEdit && `
         &:hover {
-            background-color: rgba(255, 0, 0, 0.5);
-            text-decoration: line-through;
+            background-color: rgba(255, 0, 0, 0.6);
             cursor: pointer;
+            svg {
+                display: inline-block;
+                position: absolute;
+                top: 30%;
+                right: 5px;
+            }
         }
+
     `}
+    
     text-decoration: ${props => (props.$found ? "line-through solid" : "none")};
     `;
 
@@ -32,7 +44,7 @@ const StyledListWrapper = styled.div`
     column-count: ${props => props.$colCount};
     column-gap: 0px;
     border: 1px solid darkgrey;
-    margin: 20px;
+    margin: 5px;
     max-width: fit-content;
     width: 100%;
 `;
@@ -67,6 +79,7 @@ export const WordBank = (props) => {
         <StyledWordBankWrapper>
             <StyledTitle>
                 Word Bank
+                <InformationHover style={{ margin: "5px" }} tooltip="To remove words from the Word Bank click on them" />
             </StyledTitle>
             {(() => {
                 if (props.wordList.length > 0) {
@@ -84,7 +97,9 @@ export const WordBank = (props) => {
                                         }
                                     }}
                                 >
+
                                     {word}
+                                    <TrashIcon />
                                 </StyledListItem>
                             ))}
                         </ListGroup>

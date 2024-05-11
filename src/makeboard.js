@@ -1,11 +1,15 @@
-import { Form, InputGroup, Button } from "react-bootstrap";
+import { Form, InputGroup, Button, FormControl, FormLabel, FloatingLabel } from "react-bootstrap";
 import React from "react";
 import WordBank from "./wordbank";
 import RangeSlider from "react-bootstrap-range-slider";
 import * as utils from "./utils";
 import 'bootstrap/dist/css/bootstrap.css';
 import styled from "styled-components";
+import FormRange from "react-bootstrap/esm/FormRange";
+import { InformationHover } from "./information";
 
+const apiUrl = process.env.REACT_APP_API_URL || "https://api.zabzabdoda.com";
+const mainUrl = process.env.REACT_APP_URL || "https://zabzabdoda.com";
 
 const StyledWrapper = styled.div`
     justify-content: center;
@@ -29,15 +33,18 @@ const StyledTextBoxWrapper = styled.div`
 const StyledTextBox = styled(InputGroup)`
     display: flex;
     width: 100%;
-    padding: 1rem;
+    margin-top: 20px;
+    margin-bottom: 20px;
 `;
 
 const StyledSliderWrapper = styled.div`
-    justify-content: center;
+    justify-content: space-between;
     display: flex;
     align-items: center;
-    margin: 0.5rem;
+
     padding: 0.5rem;
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
 `;
 
 const StyledTitle = styled.h1`
@@ -52,12 +59,14 @@ const StyledSliderLabel = styled.div`
     margin: 10px;
 `;
 
-const StyledSlider = styled(RangeSlider)`
-    height: 100%;
+const StyledSlider = styled(FormRange)`
+    
 `;
 
 const StyledSliderWrapperInner = styled.div`
+flex-grow: 2;
     display: flex;
+
 `;
 
 class AddWordForm extends React.Component {
@@ -118,7 +127,7 @@ class AddWordForm extends React.Component {
                     url: this.generateURL(),
                 }, () => {
                     //window.location.href = this.state.url;
-                    fetch("https://api.zabzabdoda.com/puzzles/new", {
+                    fetch(`${apiUrl}/puzzles/new`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -126,12 +135,13 @@ class AddWordForm extends React.Component {
                         body: JSON.stringify({
                             "grid": this.state.url,
                             "gridSize": this.state.gridSize,
-                            "wordList": JSON.stringify(this.state.wordList).replaceAll("\"", "'")
+                            "wordList": JSON.stringify(this.state.wordList).replaceAll("\"", "'"),
+                            "name": this.state.name
                         })
                     })
                         .then(res => res.json())
                         .then(res => {
-                            window.location.href = "https://zabzabdoda.com/play/" + res.uuid;
+                            window.location.href = `${mainUrl}/play/` + res.uuid;
                             //setPuzzleList(res.data);
                             //console.log(res);
                         });
@@ -315,12 +325,18 @@ class AddWordForm extends React.Component {
                             </StyledTextBox>
                         </StyledTextBoxWrapper>
                         <StyledSliderWrapper>
-                            <div>Grid Size:</div>
-                            <StyledSliderWrapperInner>
+                            <div style={{ display: "flex", flexGrow: 1, alignItems: "center" }}>
+
+                                Grid Size:
                                 <StyledSliderLabel>
                                     {this.state.gridSize}
                                 </StyledSliderLabel>
+                            </div>
+
+                            <StyledSliderWrapperInner>
+
                                 <StyledSlider
+                                    size="lg"
                                     value={this.state.gridSize}
                                     onChange={(e) => {
                                         this.setState({ gridSize: e.target.value });
@@ -332,10 +348,17 @@ class AddWordForm extends React.Component {
                                 />
                             </StyledSliderWrapperInner>
                         </StyledSliderWrapper>
+                        <div style={{ marginTop: "20px", marginBottom: "20px" }}>
+                            <FloatingLabel id="floatingInput" label="Name/Theme">
+                                <InformationHover tooltip="What you want to call your puzzle, or the theme it follows i.e. Star Wars" style={{ position: "absolute", left: "105px", top: "10px" }} />
+                                <FormControl id="namebox" value={this.state.name} onChange={(e) => { this.setState({ name: e.target.value }) }} />
+
+                            </FloatingLabel>
+                        </div>
                         <StyledButton onClick={this.generate}>
                             Generate Game
                         </StyledButton>
-                        <Form.Control id="textarea" readOnly value={this.state.url} as="textarea" />
+
                     </div>
                 </div>
             </StyledWrapper>
@@ -344,3 +367,5 @@ class AddWordForm extends React.Component {
 }
 
 export default AddWordForm;
+
+//<Form.Control id="textarea" readOnly value={this.state.url} as="textarea" />

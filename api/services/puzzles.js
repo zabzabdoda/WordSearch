@@ -44,6 +44,10 @@ function validateCreate(puzzle) {
         messages.push('Grid Size is empty');
     }
 
+    if (!puzzle.name) {
+        messages.push('Name is empty');
+    }
+
     if (messages.length) {
         let error = new Error(messages.join());
         error.statusCode = 400;
@@ -55,12 +59,12 @@ function validateCreate(puzzle) {
 
 function create(puzzleObj) {
     validateCreate(puzzleObj);
-    const { grid, gridSize, wordList } = puzzleObj;
+    const { grid, gridSize, wordList, name } = puzzleObj;
     //let wordList = puzzleObj.wordList;//.replace('\"', '\'');
     console.log(puzzleObj);
     let uuid = short.generate();
     //let uuid = crypto.randomUUID();
-    const result = db.run('INSERT INTO puzzles (grid, gridSize, uuid, wordList) VALUES (@grid, @gridSize, @uuid, @wordList)', { grid, gridSize, uuid, wordList });
+    const result = db.run('INSERT INTO puzzles (grid, gridSize, uuid, wordList, name) VALUES (@grid, @gridSize, @uuid, @wordList, @name)', { grid, gridSize, uuid, wordList, name });
 
     let message = 'Error in creating puzzle';
     if (result.changes) {

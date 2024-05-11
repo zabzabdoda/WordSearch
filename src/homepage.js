@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Button, ListGroup, ListGroupItem } from "react-bootstrap";
 import { useNavigate } from 'react-router-dom';
 
+const apiUrl = process.env.REACT_APP_API_URL || "https://api.zabzabdoda.com";
+
+
 export const Home = (props) => {
 
     const [dailyPuzzle, setDailyPuzzle] = useState(null);
@@ -14,7 +17,7 @@ export const Home = (props) => {
     }, [currentPage]);
 
     const fetchPuzzles = () => {
-        fetch("https://api.zabzabdoda.com/puzzles/all?page=" + currentPage)
+        fetch(`${apiUrl}/puzzles/all?page=` + currentPage)
             .then(res => res.json())
             .then(res => {
                 setPuzzleList(res.data);
