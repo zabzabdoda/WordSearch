@@ -4,8 +4,7 @@ import * as utils from "./utils";
 import FinishModal from "./finishmodal";
 import WordBank from "./wordbank";
 import styled from "styled-components";
-import ReactDOM from "react-dom";
-import useStateRef from "react-usestateref";
+
 
 const StyledBoardWrapper = styled.div`
     justify-content: center;
@@ -174,7 +173,7 @@ export const WordSearchGame = (props) => {
         let params = window.location.href.split("/play/");
         let puzzleBase64 = "";
 
-        fetch("http://localhost:9000/puzzles?uuid=" + params[1])
+        fetch("https://api.zabzabdoda.com/puzzles/get?uuid=" + params[1])
             .then(res => res.json())
             .then(res => {
                 puzzleBase64 = res.data[0];

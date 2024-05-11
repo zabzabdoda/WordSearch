@@ -14,7 +14,7 @@ export const Home = (props) => {
     }, [currentPage]);
 
     const fetchPuzzles = () => {
-        fetch("http://localhost:9000/puzzles/all?page=" + currentPage)
+        fetch("https://api.zabzabdoda.com/puzzles/all?page=" + currentPage)
             .then(res => res.json())
             .then(res => {
                 setPuzzleList(res.data);
@@ -30,7 +30,7 @@ export const Home = (props) => {
                 <ListGroup>
                     {puzzleList.map((puzzle, index) => (
                         <ListGroupItem action onClick={() => { navigate("/play/" + puzzle.uuid) }}>
-                            {puzzle.grid}
+                            {puzzle.name}
                         </ListGroupItem>
                     ))}
                 </ListGroup>

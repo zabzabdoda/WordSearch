@@ -118,7 +118,7 @@ class AddWordForm extends React.Component {
                     url: this.generateURL(),
                 }, () => {
                     //window.location.href = this.state.url;
-                    fetch("http://localhost:9000/puzzles/new", {
+                    fetch("https://api.zabzabdoda.com/puzzles/new", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
