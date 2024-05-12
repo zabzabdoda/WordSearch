@@ -1,19 +1,16 @@
 .selected {
-    background-color: rgba(76, 97, 214, 0.9);
+    background-color: #277eff;
     box-sizing: border-box;
-    padding: auto;
     border-radius: 20%;
 
 }
 
 .secondary {
-    background-color: rgba(76, 97, 214, 0.5);
-    padding: auto;
+    background-color: #277dff80;
     border-radius: 20%;
 }
 
 .completed {
-    background-color: rgba(34, 187, 60, 0.5);
-    padding: auto;
+    background-color: rgb(27, 194, 55);
     border-radius: 20%;
 }

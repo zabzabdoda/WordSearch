@@ -13,7 +13,7 @@ const mainUrl = process.env.REACT_APP_URL || "https://zabzabdoda.com";
 
 const StyledWrapper = styled.div`
     justify-content: center;
-    border: 2px gray solid;
+    border: thick lightgray solid;
     padding: 30px;
     border-radius: 20px;
     margin: 30px;
@@ -23,6 +23,7 @@ const StyledWrapper = styled.div`
     flex-direction: column;
     max-width: 500px;
     min-width: 330px;
+    background-color: white;
 `;
 
 const StyledTextBoxWrapper = styled.div`

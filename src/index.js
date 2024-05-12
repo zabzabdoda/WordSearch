@@ -6,7 +6,8 @@ import WordSearchGame from "./wordsearchplay";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Home from "./homepage";
-
+import Header from "./header";
+/*
 function Header() {
   return (
     <header className="nav-header">
@@ -15,7 +16,7 @@ function Header() {
       </nav>
     </header>
   );
-}
+}*/
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -25,7 +26,7 @@ root.render(
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/create" element={<WordSearchMaker />} />
-        <Route path="/play/:state" element={<WordSearchGame />} />
+        <Route path="/play/:state" element={<WordSearchGame data-bs-theme="dark" />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

@@ -28,11 +28,11 @@ export const Home = (props) => {
 
 
     return (
-        <div style={{ display: "flex", justifyItems: "center", justifyContent: "center", alignContent: "center", margin: "20px", padding: "10px" }}>
+        <div style={{ display: "flex", justifyItems: "center", justifyContent: "center", alignContent: "center", padding: "30px", backgroundColor: "#AEE2FF" }}>
             <div style={{ width: "60%" }}>
                 <ListGroup>
                     {puzzleList.map((puzzle, index) => (
-                        <ListGroupItem action onClick={() => { navigate("/play/" + puzzle.uuid) }}>
+                        <ListGroupItem key={index} action onClick={() => { navigate("/play/" + puzzle.uuid) }}>
                             {puzzle.name}
                         </ListGroupItem>
                     ))}

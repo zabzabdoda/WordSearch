@@ -8,7 +8,8 @@ const StyledWrapper = styled.div`
   flex-direction: column;
   display: flex;
   align-items: center;
-  justify-content: center
+  justify-content: center;
+  background-color: #AEE2FF;
 `;
 
 const StyledAlert = styled(Alert)`

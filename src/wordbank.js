@@ -7,13 +7,19 @@ import TrashIcon from "./icons";
 
 const StyledListItem = styled(ListGroupItem)`
     min-width: 100px;
-    max-width: 500px;
+    max-width: 775px;
     break-inside: avoid;
+    text-decoration: solid;
+    border: none;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-weight: bold;
+    margin: 10px;
+    padding: 5px;
+    max-width: fit-content;
     background-color: ${props => {
         if (props.$found) {
-            return "rgba(61, 165, 58,0.5)";
+            return "rgb(27, 194, 55)";
         } else if (props.$toobig) {
             return "rgba(255, 255, 0, 0.5)";
         } else {
@@ -37,15 +43,10 @@ const StyledListItem = styled(ListGroupItem)`
 
     `}
     
-    text-decoration: ${props => (props.$found ? "line-through solid" : "none")};
     `;
 
 const StyledListWrapper = styled.div`
-    column-count: ${props => props.$colCount};
-    column-gap: 0px;
-    border: 1px solid darkgrey;
     margin: 5px;
-    max-width: fit-content;
     width: 100%;
 `;
 
@@ -55,12 +56,19 @@ const StyledWordBankWrapper = styled.div`
     align-items: center;
     width: 100%;
     flex-direction: column;
+    background-color: white;
+    border-radius: 10px;
+    border: thick lightgray solid;
+    
+
+
 `;
 
 const StyledTitle = styled.h3`
     margin: 0;
     width: 100%;
     text-align: center;
+    border-bottom: dashed medium lightgrey;
 `;
 
 
@@ -76,40 +84,46 @@ export const WordBank = (props) => {
     }
 
     return (
-        <StyledWordBankWrapper>
-            <StyledTitle>
-                Word Bank
-                <InformationHover style={{ margin: "5px" }} tooltip="To remove words from the Word Bank click on them" />
-            </StyledTitle>
-            {(() => {
-                if (props.wordList.length > 0) {
-                    return (<StyledListWrapper $colCount={props.colCount}>
-                        <ListGroup>
-                            {props.wordList.map((word, index) => (
-                                <StyledListItem
-                                    key={index}
-                                    $toobig={props.canEdit && word.length > props.gridSize}
-                                    $found={props.crossWordsOff && props.foundWords[word]}
-                                    $canEdit={props.canEdit}
-                                    onClick={() => {
-                                        if (props.canEdit) {
-                                            deleteWord(word)
-                                        }
-                                    }}
-                                >
+        <div style={{ padding: "20px", width: "100%", maxWidth: "675px" }}>
+            <StyledWordBankWrapper>
+                <StyledTitle>
+                    Word Bank
+                    {(() => {
+                        if (props.canEdit) {
+                            return (<InformationHover style={{ margin: "5px" }} tooltip="To remove words from the Word Bank click on them" />);
+                        }
+                    })()}
+                </StyledTitle>
+                {(() => {
+                    if (props.wordList.length > 0) {
+                        return (<StyledListWrapper $colCount={props.colCount}>
+                            <ListGroup style={{ borderRadius: "0px", display: "flex", justifyContent: "space-evenly", alignContent: "center", alignItems: "center", flexDirection: "row", flexWrap: "wrap", width: "100%", textAlign: "center" }}>
+                                {props.wordList.map((word, index) => (
+                                    <StyledListItem
+                                        key={index}
+                                        $toobig={props.canEdit && word.length > props.gridSize}
+                                        $found={props.crossWordsOff && props.foundWords[word]}
+                                        $canEdit={props.canEdit}
+                                        onClick={() => {
+                                            if (props.canEdit) {
+                                                deleteWord(word)
+                                            }
+                                        }}
+                                    >
 
-                                    {word}
-                                    <TrashIcon />
-                                </StyledListItem>
-                            ))}
-                        </ListGroup>
-                    </StyledListWrapper>);
-                } else {
-                    return <></>;
-                }
-            })()}
+                                        {word}
+                                        <TrashIcon />
+                                    </StyledListItem>
+                                ))}
+                            </ListGroup>
+                        </StyledListWrapper>);
+                    } else {
+                        return <></>;
+                    }
+                })()}
 
-        </StyledWordBankWrapper>
+            </StyledWordBankWrapper>
+        </div>
     );
 }
 

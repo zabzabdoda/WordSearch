@@ -13,10 +13,13 @@ const StyledBoardWrapper = styled.div`
     @media screen and (max-width: 570px) {
         flex-direction: column;
     }
+    background-color: #AEE2FF;
+    flex-direction: column;
+    width: 100%;
 `;
 
 const StyledGridWrapper = styled(StyledBoardWrapper)`
-    width: 60%;
+
 `;
 
 const apiUrl = process.env.REACT_APP_API_URL || "https://api.zabzabdoda.com";
@@ -195,9 +198,12 @@ export const WordSearchGame = (props) => {
 
     return (
         <>
-            <div>
+            <div >
                 <FinishModal show={showConfetti} onClose={closeModal}></FinishModal>
                 <StyledBoardWrapper>
+                    <StyledBoardWrapper >
+                        <WordBank colCount={2} canEdit={false} crossWordsOff={true} gridSize={gridSize} wordList={wordList} foundWords={foundWords} />
+                    </StyledBoardWrapper>
                     <StyledGridWrapper>
                         <Grid
                             tempGrid={tempGrid}
@@ -208,9 +214,7 @@ export const WordSearchGame = (props) => {
                             gridSize={gridSize}
                         />
                     </StyledGridWrapper>
-                    <StyledBoardWrapper >
-                        <WordBank colCount={2} canEdit={false} crossWordsOff={true} gridSize={gridSize} wordList={wordList} foundWords={foundWords} />
-                    </StyledBoardWrapper>
+
                 </StyledBoardWrapper>
             </div>
         </>

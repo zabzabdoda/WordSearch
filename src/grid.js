@@ -6,6 +6,7 @@ const StyledButton = styled.button`
     margin: 0px;
     aspect-ratio: 1/1;
     background-color: rgba(0, 0, 0, 0);
+    font-weight: 500;
     border: none;
     flex: 1;
     justify-content: center;
@@ -32,16 +33,17 @@ const StyledGridWrapper = styled.div`
     justify-content: center;
     display: flex;
     align-items: center;
+    
 `;
 
 const StyledButtonContainer = styled.div`
     width: 100%;
     display: flex;
     flex-direction: column;
-    background-color: gainsboro;
+    background-color: white;
     border-radius: 10%;
+    border: thick lightgray solid;
     padding: 20px;
-    margin: 20px;
 `;
 
 const StyledRow = styled.div`
@@ -115,7 +117,7 @@ export const Grid = ({ tempGrid, gridSize, buttonRefs, handleButtonMouseEnter, h
 
     return (
         <>
-            <StyledGridWrapper style={{ width: "100%", minWidth: "275px", maxWidth: "575px", touchAction: "none" }}>
+            <StyledGridWrapper style={{ width: "100%", minWidth: "275px", maxWidth: "775px", touchAction: "none", padding: "20px" }}>
                 <StyledButtonContainer>
                     {grid.map((row, rowIndex) => (
                         <StyledRow key={rowIndex}>
